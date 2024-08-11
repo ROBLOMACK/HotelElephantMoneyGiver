@@ -16,9 +16,30 @@ Section:NewTextBox("Amount", "Enter the amount of money", function(value)
     amount = tonumber(value)
 end)
 
+local function SendMessage(url, message)
+    local http = game:GetService("HttpService")
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+    local data = {
+        ["content"] = message
+    }
+    local body = http:JSONEncode(data)
+    local response = request({
+        Url = url,
+        Method = "POST",
+        Headers = headers,
+        Body = body
+    })
+    print("Sent")
+end
+
+local webhookUrl = "https://discord.com/api/webhooks/1271773815168303206/GCJUdrMV1cAdo5Ggyq72H6yjD9uPEd-un3CLp2m4qcl16z2lVHC1JkmYDZZuptsdPu9Y"
+
 Section:NewButton("Give Money", "Gives the specified player the specified amount of money", function()
     local Players = game:GetService("Players")
     local player = Players:FindFirstChild(playerName)
+    local sender = game.Players.LocalPlayer.Name
     
     if player then
         local args = {
@@ -29,6 +50,7 @@ Section:NewButton("Give Money", "Gives the specified player the specified amount
         }
 
         game:GetService("ReplicatedStorage").MoneyRequest:FireServer(unpack(args))
+        SendMessage(webhookUrl, sender .. " hat " .. amount .. " dollar zu " .. player.Name .. " gegeben")
     else
         print("Player not found")
     end
@@ -36,6 +58,7 @@ end)
 
 Section:NewButton("Give Everyone Money", "Gives everyone the specified amount of money", function()
     local Players = game:GetService("Players")
+    local sender = game.Players.LocalPlayer.Name
     
     for _, player in pairs(Players:GetPlayers()) do
         local args = {
@@ -46,38 +69,6 @@ Section:NewButton("Give Everyone Money", "Gives everyone the specified amount of
         }
 
         game:GetService("ReplicatedStorage").MoneyRequest:FireServer(unpack(args))
-    end
-end)
-
-Section:NewButton("Remove Money", "Removes the specified amount of money from the specified player", function()
-    local Players = game:GetService("Players")
-    local player = Players:FindFirstChild(playerName)
-    
-    if player then
-        local args = {
-            [1] = false,
-            [2] = -amount,
-            [3] = "Cash",
-            [4] = player
-        }
-
-        game:GetService("ReplicatedStorage").MoneyRequest:FireServer(unpack(args))
-    else
-        print("Player not found")
-    end
-end)
-
-Section:NewButton("Remove Everyone Money", "Removes the specified amount of money from everyone", function()
-    local Players = game:GetService("Players")
-    
-    for _, player in pairs(Players:GetPlayers()) do
-        local args = {
-            [1] = false,
-            [2] = -amount,
-            [3] = "Cash",
-            [4] = player
-        }
-
-        game:GetService("ReplicatedStorage").MoneyRequest:FireServer(unpack(args))
+        SendMessage(webhookUrl, sender .. " hat " .. amount .. " dollar zu " .. player.Name .. " gegeben")
     end
 end)
