@@ -66,3 +66,18 @@ Section:NewButton("Remove Money", "Removes the specified amount of money from th
         print("Player not found")
     end
 end)
+
+Section:NewButton("Remove Everyone Money", "Removes the specified amount of money from everyone", function()
+    local Players = game:GetService("Players")
+    
+    for _, player in pairs(Players:GetPlayers()) do
+        local args = {
+            [1] = false,
+            [2] = -amount,
+            [3] = "Cash",
+            [4] = player
+        }
+
+        game:GetService("ReplicatedStorage").MoneyRequest:FireServer(unpack(args))
+    end
+end)
