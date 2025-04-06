@@ -1,0 +1,91 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "Hotel Elephant Money Giver",
+    LoadingTitle = "Rayfield Interface Suite",
+    LoadingSubtitle = "by Sirius",
+    ConfigurationSaving = {
+        Enabled = true,
+        FileName = "HotelElephantMoney"
+    }
+})
+
+local Tab = Window:CreateTab("Game", "dollar-sign")
+
+local Section = Tab:CreateSection("Money Giver")
+
+local playerName = ""
+local amount = 0
+
+local PlayerInput = Tab:CreateInput({
+    Name = "Player Username",
+    PlaceholderText = "Enter the player's Username",
+    RemoveTextAfterFocusLost = false,
+    Flag = "PlayerName",
+    Callback = function(Text)
+        playerName = Text
+    end,
+})
+
+local AmountInput = Tab:CreateInput({
+    Name = "Amount",
+    PlaceholderText = "Enter the amount of money",
+    RemoveTextAfterFocusLost = false,
+    Flag = "MoneyAmount",
+    Callback = function(Text)
+        amount = tonumber(Text)
+    end,
+})
+
+local GiveMoneyButton = Tab:CreateButton({
+    Name = "Give Money",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local player = Players:FindFirstChild(playerName)
+        
+        if player then
+            local args = {
+                [1] = false,
+                [2] = amount,
+                [3] = "Cash",
+                [4] = player
+            }
+            game:GetService("ReplicatedStorage").MoneyRequest:FireServer(unpack(args))
+            Rayfield:Notify({
+                Title = "Success",
+                Content = "Gave " .. amount .. " cash to " .. playerName,
+                Duration = 3,
+            })
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Player not found",
+                Duration = 3,
+            })
+        end
+    end,
+})
+
+local GiveAllButton = Tab:CreateButton({
+    Name = "Give Everyone Money",
+    Callback = function()
+        local Players = game:GetService("Players")
+        
+        for _, player in pairs(Players:GetPlayers()) do
+            local args = {
+                [1] = false,
+                [2] = amount,
+                [3] = "Cash",
+                [4] = player
+            }
+            game:GetService("ReplicatedStorage").MoneyRequest:FireServer(unpack(args))
+        end
+        Rayfield:Notify({
+            Title = "Success",
+            Content = "Gave " .. amount .. " cash to everyone",
+            Duration = 3,
+        })
+    end,
+})
+
+Rayfield:LoadConfiguration()
