@@ -4,3 +4,7 @@ Loadstring:
 ```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/ROBLOMACK/HotelElephantMoneyGiver/main/HEMG"))()
 ```
+With Rayfield:
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/ROBLOMACK/HotelElephantMoneyGiver/main/HEMG-Rayfield"))()
+```
